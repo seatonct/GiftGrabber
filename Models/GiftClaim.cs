@@ -1,6 +1,6 @@
 namespace GiftGrabber.Models;
 
-public class Claim
+public class GiftClaim
 {
     public int Id { get; set; }
     public int ItemId { get; set; }

@@ -1,6 +1,6 @@
 namespace GiftGrabber.Models.DTOs;
 
-public class ClaimDTO
+public class GiftClaimDTO
 {
     public int Id { get; set; }
     public int ItemId { get; set; }

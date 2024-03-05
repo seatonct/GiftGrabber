@@ -14,5 +14,5 @@ public class UserProfileDTO
     public IdentityUser IdentityUser { get; set; }
     public List<string> Roles { get; set; }
     public List<WishListDTO>? WishLists { get; set; }
-    public List<ClaimDTO>? Claims { get; set; }
+    public List<GiftClaimDTO>? GiftClaims { get; set; }
 }
