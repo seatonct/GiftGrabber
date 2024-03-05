@@ -134,5 +134,21 @@ public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
                 WishListId = 1
             }
         });
+
+        modelBuilder.Entity<GiftClaim>().HasData(new GiftClaim[]
+        {
+            new GiftClaim 
+            {
+                Id = 1,
+                ItemId = 1,
+                UserId = 1
+            },
+            new GiftClaim 
+            {
+                Id = 2,
+                ItemId = 3,
+                UserId = 1,
+            }
+        });
     }
 }
