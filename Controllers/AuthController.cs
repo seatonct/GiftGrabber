@@ -8,6 +8,7 @@ using System.Text;
 using GiftGrabber.Models;
 using GiftGrabber.Models.DTOs;
 using GiftGrabber.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace GiftGrabber.Controllers;
 
@@ -98,7 +99,10 @@ public class AuthController : ControllerBase
     public IActionResult Me()
     {
         var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var profile = _dbContext.UserProfiles.SingleOrDefault(up => up.IdentityUserId == identityUserId);
+        var profile = _dbContext.UserProfiles
+            .Include(up => up.WishLists).ThenInclude(wl => wl.ListType)
+            .Include(up => up.GiftClaims).ThenInclude(gc => gc.Item).ThenInclude(i => i.WishList)
+            .SingleOrDefault(up => up.IdentityUserId == identityUserId);
         var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
         if (profile != null)
         {
@@ -110,7 +114,42 @@ public class AuthController : ControllerBase
                 IdentityUserId = identityUserId,
                 UserName = User.FindFirstValue(ClaimTypes.Name),
                 Email = User.FindFirstValue(ClaimTypes.Email),
-                Roles = roles
+                Roles = roles,
+                WishLists = profile.WishLists.Select(w => new WishListDTO
+                {
+                    Id = w.Id,
+                    Name = w.Name,
+                    ListTypeId = w.ListTypeId,
+                    ListType = new ListTypeDTO
+                    {
+                        Id = w.ListType.Id,
+                        Name = w.ListType.Name
+                    },
+                    UserId = w.UserId,
+                    ForSelf = w.ForSelf
+                }).ToList(),
+                GiftClaims = profile.GiftClaims.Select(gc => new GiftClaimDTO {
+                    Id = gc.Id,
+                    ItemId = gc.ItemId,
+                    Item = new ItemDTO
+                    {
+                        Id = gc.Item.Id,
+                        Name = gc.Item.Name,
+                        Description = gc.Item.Description,
+                        Price = gc.Item.Price,
+                        ImageUrl = gc.Item.ImageUrl,
+                        StoreUrl = gc.Item.StoreUrl,
+                        WishListId = gc.Item.WishListId,
+                        WishList = new WishListDTO
+                        {
+                            Id = gc.Item.WishList.Id,
+                            Name = gc.Item.WishList.Name,
+                            ListTypeId = gc.Item.WishList.ListTypeId,
+                            UserId = gc.Item.WishList.UserId
+                        }
+                    },
+                    UserId = gc.UserId
+                }).ToList()
             };
 
             return Ok(userDto);

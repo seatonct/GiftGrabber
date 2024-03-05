@@ -13,4 +13,6 @@ public class UserProfileDTO
     public string IdentityUserId { get; set; }
     public IdentityUser IdentityUser { get; set; }
     public List<string> Roles { get; set; }
+    public List<WishListDTO> WishLists { get; set; }
+    public List<GiftClaimDTO> GiftClaims { get; set; }
 }
