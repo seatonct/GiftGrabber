@@ -7,6 +7,10 @@ namespace GiftGrabber.Data;
 public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
 {
     private readonly IConfiguration _configuration;
+    public DbSet<WishList> WishLists { get; set; }
+    public DbSet<ListType> ListTypes { get; set; }
+    public DbSet<Item> Items { get; set; }
+    public DbSet<GiftClaim> GiftClaims { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
 
     public GiftGrabberDbContext(DbContextOptions<GiftGrabberDbContext> context, IConfiguration config) : base(context)
