@@ -19,7 +19,7 @@ public class WishListController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
+    // [Authorize]
     public IActionResult Get()
     {
         return Ok(_dbContext
@@ -40,19 +40,19 @@ public class WishListController : ControllerBase
             .ToList());
     }
 
-    // [HttpGet("{id}")]
-    // [Authorize]
-    // public IActionResult GetById(int id)
-    // {
-    //     WishList? wishList = _dbContext
-    //         .WishLists
-    //         .SingleOrDefault(w => w.Id == id);
+    [HttpGet("{id}")]
+    [Authorize]
+    public IActionResult GetById(int id)
+    {
+        WishList? wishList = _dbContext
+            .WishLists
+            .SingleOrDefault(w => w.Id == id);
         
-    //     if (wishList == null)
-    //     {
-    //         return NotFound();
-    //     }
+        if (wishList == null)
+        {
+            return NotFound();
+        }
         
-    //     return Ok(wishList);
-    // }
+        return Ok(wishList);
+    }
 }
