@@ -19,7 +19,7 @@ public class WishListController : ControllerBase
     }
 
     [HttpGet]
-    // [Authorize]
+    [Authorize]
     public IActionResult Get()
     {
         return Ok(_dbContext
@@ -54,5 +54,21 @@ public class WishListController : ControllerBase
         }
         
         return Ok(wishList);
+    }
+
+    [HttpPost]
+    [Authorize]
+    public IActionResult CreateWishList([FromBody] CreateWishListDTO newWishList)
+    {
+        var wishList = new WishList
+        {
+            Name = newWishList.Name,
+            ListTypeId = newWishList.ListTypeId,
+            UserId = newWishList.UserId,
+            ForSelf = newWishList.ForSelf
+        }; 
+        _dbContext.WishLists.Add(wishList);
+        _dbContext.SaveChanges();
+        return Created($"/api/wishlist/{wishList.Id}", wishList);
     }
 }
