@@ -55,7 +55,7 @@ public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
             new ListType {Id = 4, Name = "Bar/Bat Mitzvah"},
             new ListType {Id = 5, Name = "Quinceañera"},
             new ListType {Id = 6, Name = "Wedding Registry"},
-            new ListType {Id = 7, Name = "Briday Shower"},
+            new ListType {Id = 7, Name = "Bridal Shower"},
             new ListType {Id = 8, Name = "Honey-Do"},
             new ListType {Id = 9, Name = "Housewarming"},
             new ListType {Id = 10, Name = "Baby Shower"},
