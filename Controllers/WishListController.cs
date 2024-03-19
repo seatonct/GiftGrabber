@@ -26,26 +26,57 @@ public class WishListController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public IActionResult Get()
+    public IActionResult Get([FromQuery] string? userName)
     {
         try
         {
-            return Ok(_dbContext
-                .WishLists
-                .Select(w => new WishListDTO
-                {
-                    Id = w.Id,
-                        Name = w.Name,
-                        ListTypeId = w.ListTypeId,
-                        ListType = new ListTypeDTO
-                        {
-                            Id = w.ListType.Id,
-                            Name = w.ListType.Name
-                        },
-                        UserId = w.UserId,
-                        ForSelf = w.ForSelf
-                })
-                .ToList());
+            if (!string.IsNullOrEmpty(userName))
+            {
+                var userLists =_dbContext
+                    .WishLists
+                    .Include(w => w.User)
+                    .Select(w => new WishListDTO
+                    {
+                        Id = w.Id,
+                            Name = w.Name,
+                            ListTypeId = w.ListTypeId,
+                            ListType = new ListTypeDTO
+                            {
+                                Id = w.ListType.Id,
+                                Name = w.ListType.Name
+                            },
+                            UserId = w.UserId,
+                            User = new UserProfileDTO
+                            {
+                                FirstName = w.User.FirstName,
+                                LastName = w.User.LastName
+                            },
+                            ForSelf = w.ForSelf
+                    })
+                    .Where(w => w.User.IdentityUser.UserName == userName)
+                    .ToList();
+
+                return Ok(userLists);
+            } 
+            else 
+            {
+                return Ok(_dbContext
+                    .WishLists
+                    .Select(w => new WishListDTO
+                    {
+                        Id = w.Id,
+                            Name = w.Name,
+                            ListTypeId = w.ListTypeId,
+                            ListType = new ListTypeDTO
+                            {
+                                Id = w.ListType.Id,
+                                Name = w.ListType.Name
+                            },
+                            UserId = w.UserId,
+                            ForSelf = w.ForSelf
+                    })
+                    .ToList());
+            }
         }
 
         catch
