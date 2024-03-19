@@ -45,4 +45,28 @@ public class ItemController : ControllerBase
                     })
                     .ToList());
     }
+
+    [HttpGet("{id}")]
+    [Authorize]
+    public IActionResult GetById(int id)
+    {
+        try
+        {
+            Item? item = _dbContext
+                .Items
+                .SingleOrDefault(i => i.Id == id);
+            
+            if (item == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(item);
+        }
+
+        catch
+        {
+            return StatusCode(500, "An error occurred. Please try again later.");
+        }
+    }
 }
