@@ -3,6 +3,7 @@ using System;
 using GiftGrabber.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GiftGrabber.Migrations
 {
     [DbContext(typeof(GiftGrabberDbContext))]
-    partial class GiftGrabberDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240319154912_GetItems")]
+    partial class GetItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
