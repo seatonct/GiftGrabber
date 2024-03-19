@@ -10,6 +10,6 @@ public class WishList
     public ListType ListType {get; set;}
     public int UserId { get; set; }
     public UserProfile User { get; set; }
-    public Boolean ForSelf { get; set; }
-    public List<Item> Items { get; set; }
+    public bool ForSelf { get; set; }
+    public List<Item>? Items { get; set; }
 }

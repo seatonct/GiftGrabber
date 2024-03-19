@@ -11,5 +11,5 @@ public class WishListDTO
     public int UserId { get; set; }
     public UserProfileDTO User { get; set; }
     public Boolean ForSelf { get; set; }
-    public List<ItemDTO> Items { get; set; }
+    public List<ItemDTO>? Items { get; set; }
 }

@@ -3,6 +3,7 @@ using System;
 using GiftGrabber.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GiftGrabber.Migrations
 {
     [DbContext(typeof(GiftGrabberDbContext))]
-    partial class GiftGrabberDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240306215659_WishList")]
+    partial class WishList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -194,7 +197,7 @@ namespace GiftGrabber.Migrations
                         new
                         {
                             Id = 7,
-                            Name = "Bridal Shower"
+                            Name = "Briday Shower"
                         },
                         new
                         {
@@ -429,13 +432,13 @@ namespace GiftGrabber.Migrations
                         {
                             Id = "dbc40bc6-0829-4ac5-a3ed-180f5e916a5f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1cde90e3-0b63-4ffb-8ec5-374446238d58",
+                            ConcurrencyStamp = "1548e22f-00c5-4419-8f50-5e580a26c222",
                             Email = "admina@strator.comx",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEHuZb/z3qj5uV1Ex8NLDfQvHNboFAuWf40ZCZxxvoVf7nISpXPdCorLHWhMM616Xgw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOqnuTqhpEbugb0cpGaYLhh+Tbi0Vcd1+MJQtTo3HOYQzCoZCiTTNPl6c+5nSk5hfA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4870a79d-1de7-4fc7-8425-700fd9970b46",
+                            SecurityStamp = "ab749921-50ce-4640-8741-629a154aed88",
                             TwoFactorEnabled = false,
                             UserName = "Administrator"
                         });

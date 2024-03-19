@@ -3,6 +3,7 @@ using System;
 using GiftGrabber.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GiftGrabber.Migrations
 {
     [DbContext(typeof(GiftGrabberDbContext))]
-    partial class GiftGrabberDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240307234607_RemovedNullables")]
+    partial class RemovedNullables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -429,13 +432,13 @@ namespace GiftGrabber.Migrations
                         {
                             Id = "dbc40bc6-0829-4ac5-a3ed-180f5e916a5f",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1cde90e3-0b63-4ffb-8ec5-374446238d58",
+                            ConcurrencyStamp = "83ef08e1-d92f-4436-a9cd-c14ba88dff7e",
                             Email = "admina@strator.comx",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAIAAYagAAAAEHuZb/z3qj5uV1Ex8NLDfQvHNboFAuWf40ZCZxxvoVf7nISpXPdCorLHWhMM616Xgw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECM1+H57/y67g3w0Tx6X9sU9M+LBbtEwgy+NsmVCidkEo3ZuV57/yFNcJtnLWE6jaw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "4870a79d-1de7-4fc7-8425-700fd9970b46",
+                            SecurityStamp = "ded82fa5-7b94-46ec-a664-6f72b178b98f",
                             TwoFactorEnabled = false,
                             UserName = "Administrator"
                         });
