@@ -86,4 +86,42 @@ public class ItemController : ControllerBase
             return StatusCode(500, "An error occurred. Please try again later.");
         }
     }
+
+    [HttpPut("{id}")]
+    [Authorize]
+    public IActionResult UpdateItem(Item item, int id)
+    {
+        try
+        {
+            var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var profile = _dbContext.UserProfiles.SingleOrDefault(up => up.IdentityUserId == identityUserId);
+            Item? itemToUpdate = _dbContext.Items.SingleOrDefault(i => i.Id == id);
+
+            // Add user validation handling.
+            if (itemToUpdate == null)
+            {
+                return NotFound();
+            }
+            else if (id != item.Id)
+            {
+                return BadRequest();
+            }
+
+            itemToUpdate.Name = item.Name;
+            itemToUpdate.Description = item.Description;
+            itemToUpdate.Price = item.Price;
+            itemToUpdate.ImageUrl = item.ImageUrl;
+            itemToUpdate.StoreUrl = item.StoreUrl;
+            itemToUpdate.WishListId = item.WishListId;
+
+            _dbContext.SaveChanges();
+
+            return NoContent();
+        }
+
+        catch
+        {
+            return StatusCode(500, "An error occurred. Please try again later.");
+        }
+    }
 }
