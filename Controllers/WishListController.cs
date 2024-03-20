@@ -115,6 +115,10 @@ public class WishListController : ControllerBase
     {
         try
         {
+            var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var profile = _dbContext.UserProfiles.SingleOrDefault(up => up.IdentityUserId == identityUserId);
+
+            wishList.UserId = profile.Id;
             _dbContext.WishLists.Add(wishList);
             _dbContext.SaveChanges();
             return Created($"/api/wishlist/{wishList.Id}", wishList);
@@ -144,10 +148,14 @@ public class WishListController : ControllerBase
             {
                 return BadRequest();
             }
+            // This needs some refinement.
+            else if (wishList.UserId != profile.Id)
+            {
+            return Unauthorized();
+            }
 
             wishListToUpdate.Name = wishList.Name;
             wishListToUpdate.ListTypeId = wishList.ListTypeId;
-            wishListToUpdate.UserId = wishList.UserId;
             wishListToUpdate.ForSelf = wishList.ForSelf;
 
             _dbContext.SaveChanges();
