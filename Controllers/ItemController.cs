@@ -69,4 +69,21 @@ public class ItemController : ControllerBase
             return StatusCode(500, "An error occurred. Please try again later.");
         }
     }
+
+    [HttpPost]
+    [Authorize]
+    public IActionResult CreateItem(Item item)
+    {
+        try
+        {
+            _dbContext.Items.Add(item);
+            _dbContext.SaveChanges();
+            return Created($"/api/Item/{item.Id}", item);
+        }
+
+        catch
+        {
+            return StatusCode(500, "An error occurred. Please try again later.");
+        }
+    }
 }
