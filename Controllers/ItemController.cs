@@ -124,4 +124,34 @@ public class ItemController : ControllerBase
             return StatusCode(500, "An error occurred. Please try again later.");
         }
     }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public IActionResult DeleteItem(int id)
+    {
+        try
+        {
+        var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var profile = _dbContext.UserProfiles.SingleOrDefault(up => up.IdentityUserId == identityUserId);
+        Item? item = _dbContext.Items.SingleOrDefault(i => i.Id == id);
+
+        if (item == null)
+        {
+            return NotFound();
+        }
+        else if (item.WishList.UserId != profile.Id)
+        {
+            return Unauthorized();
+        }
+
+        _dbContext.Items.Remove(item);
+        _dbContext.SaveChanges();
+
+        return NoContent();
+        }
+        catch
+        {
+            return StatusCode(500, "An error occurred. Please try again later.");
+        }
+    }
 }
