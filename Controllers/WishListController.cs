@@ -138,7 +138,7 @@ public class WishListController : ControllerBase
         {
             var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var profile = _dbContext.UserProfiles.SingleOrDefault(up => up.IdentityUserId == identityUserId);
-            WishList wishListToUpdate = _dbContext.WishLists.SingleOrDefault(wl => wl.Id == id);
+            WishList? wishListToUpdate = _dbContext.WishLists.SingleOrDefault(wl => wl.Id == id);
 
             if (wishListToUpdate == null)
             {
@@ -148,8 +148,7 @@ public class WishListController : ControllerBase
             {
                 return BadRequest();
             }
-            // This needs some refinement.
-            else if (wishList.UserId != profile.Id)
+            else if (wishListToUpdate.UserId != profile?.Id)
             {
             return Unauthorized();
             }
@@ -177,13 +176,13 @@ public class WishListController : ControllerBase
         {
         var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var profile = _dbContext.UserProfiles.SingleOrDefault(up => up.IdentityUserId == identityUserId);
-        WishList wishList = _dbContext.WishLists.SingleOrDefault(wl => wl.Id == id);
+        WishList? wishList = _dbContext.WishLists.SingleOrDefault(wl => wl.Id == id);
 
         if (wishList == null)
         {
             return NotFound();
         }
-        else if (wishList.UserId != profile.Id)
+        else if (wishList.UserId != profile?.Id)
         {
             return Unauthorized();
         }

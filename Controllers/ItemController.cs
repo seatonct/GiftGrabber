@@ -40,7 +40,8 @@ public class ItemController : ControllerBase
                         WishList = new WishListDTO
                         {
                             Id = i.WishList.Id,
-                            Name = i.WishList.Name
+                            Name = i.WishList.Name,
+                            UserId = i.WishList.UserId
                         }
                     })
                     .ToList());
@@ -60,6 +61,14 @@ public class ItemController : ControllerBase
             {
                 return NotFound();
             }
+
+            WishList? wishList = _dbContext
+                .WishLists
+                .SingleOrDefault(wl => wl.Id == item.WishListId);
+            
+            item.WishList.Id = wishList.Id;
+            item.WishList.Name = wishList.Name;
+            item.WishList.UserId = wishList.UserId;
             
             return Ok(item);
         }
@@ -96,8 +105,8 @@ public class ItemController : ControllerBase
             var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var profile = _dbContext.UserProfiles.SingleOrDefault(up => up.IdentityUserId == identityUserId);
             Item? itemToUpdate = _dbContext.Items.SingleOrDefault(i => i.Id == id);
+            WishList? wishList = _dbContext.WishLists.SingleOrDefault(wl => wl.Id == itemToUpdate.WishListId );
 
-            // Add user validation handling.
             if (itemToUpdate == null)
             {
                 return NotFound();
@@ -105,6 +114,10 @@ public class ItemController : ControllerBase
             else if (id != item.Id)
             {
                 return BadRequest();
+            }
+            else if (wishList?.UserId != profile?.Id)
+            {
+                return Unauthorized();
             }
 
             itemToUpdate.Name = item.Name;
@@ -139,7 +152,9 @@ public class ItemController : ControllerBase
         {
             return NotFound();
         }
-        else if (item.WishList.UserId != profile.Id)
+
+        WishList? wishList = _dbContext.WishLists.SingleOrDefault(wl => wl.Id == item.WishListId);
+        if (wishList?.UserId != profile?.Id)
         {
             return Unauthorized();
         }
