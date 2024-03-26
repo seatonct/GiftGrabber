@@ -41,4 +41,35 @@ public class GiftClaimController : ControllerBase
                     })
                     .ToList());
     }
+
+    [HttpGet("{id}")]
+    [Authorize]
+    public IActionResult GetById(int id)
+    {
+        try
+        {
+            GiftClaim? giftClaim = _dbContext
+                .GiftClaims
+                .SingleOrDefault(gc => gc.Id == id);
+            
+            if (giftClaim == null)
+            {
+                return NotFound();
+            }
+
+            Item? item = _dbContext
+                .Items
+                .SingleOrDefault(i => i.Id == giftClaim.ItemId);
+            
+            giftClaim.Item.Id = item.Id;
+            giftClaim.Item.Name = item.Name;
+            
+            return Ok(giftClaim);
+        }
+
+        catch
+        {
+            return StatusCode(500, "An error occurred. Please try again later.");
+        }
+    }
 }
