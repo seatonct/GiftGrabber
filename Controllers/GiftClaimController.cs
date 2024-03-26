@@ -102,4 +102,35 @@ public class GiftClaimController : ControllerBase
             return StatusCode(500, "An error occurred. Please try again later.");
         }
     }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public IActionResult DeleteGiftClaim(int id)
+    {
+        try
+        {
+        var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var profile = _dbContext.UserProfiles.SingleOrDefault(up => up.IdentityUserId == identityUserId);
+        GiftClaim? giftClaim = _dbContext.GiftClaims.SingleOrDefault(gc => gc.Id == id);
+
+        if (giftClaim == null)
+        {
+            return NotFound();
+        }
+
+        if (giftClaim.UserId != profile?.Id)
+        {
+            return Unauthorized();
+        }
+
+        _dbContext.GiftClaims.Remove(giftClaim);
+        _dbContext.SaveChanges();
+
+        return NoContent();
+        }
+        catch
+        {
+            return StatusCode(500, "An error occurred. Please try again later.");
+        }
+    }
 }
