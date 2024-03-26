@@ -72,4 +72,34 @@ public class GiftClaimController : ControllerBase
             return StatusCode(500, "An error occurred. Please try again later.");
         }
     }
+
+    [HttpPost]
+    [Authorize]
+    public IActionResult CreateGiftClaim(GiftClaim giftClaim)
+    {
+        try
+        {
+            GiftClaim? existingGiftClaim = _dbContext
+                .GiftClaims
+                .SingleOrDefault(gc => gc.ItemId == giftClaim.ItemId);
+            
+            if (existingGiftClaim != null)
+            {
+                return BadRequest();
+            }
+
+            var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var profile = _dbContext.UserProfiles.SingleOrDefault(up => up.IdentityUserId == identityUserId);
+
+            giftClaim.UserId = profile.Id;
+            _dbContext.GiftClaims.Add(giftClaim);
+            _dbContext.SaveChanges();
+            return Created($"/api/GiftClaim/{giftClaim.Id}", giftClaim);
+        }
+
+        catch
+        {
+            return StatusCode(500, "An error occurred. Please try again later.");
+        }
+    }
 }
