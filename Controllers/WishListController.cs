@@ -32,6 +32,9 @@ public class WishListController : ControllerBase
         {
             if (!string.IsNullOrEmpty(userName))
             {
+                var userIdentity = _dbContext.IdentityUsers.SingleOrDefault(iu => iu.UserName == userName);
+                var profile = _dbContext.UserProfiles.SingleOrDefault(up => up.IdentityUserId == userIdentity.Id);
+
                 var userLists =_dbContext
                     .WishLists
                     .Include(w => w.User)
@@ -53,7 +56,7 @@ public class WishListController : ControllerBase
                             },
                             ForSelf = w.ForSelf
                     })
-                    .Where(w => w.User.IdentityUser.UserName == userName)
+                    .Where(w => w.UserId == profile.Id)
                     .ToList();
 
                 return Ok(userLists);

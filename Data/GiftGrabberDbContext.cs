@@ -11,6 +11,7 @@ public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
     public DbSet<Item> Items { get; set; }
     public DbSet<GiftClaim> GiftClaims { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
+    public DbSet<IdentityUser> IdentityUsers { get; set; }
 
     public GiftGrabberDbContext(DbContextOptions<GiftGrabberDbContext> context, IConfiguration config) : base(context)
     {
