@@ -115,19 +115,19 @@ public class AuthController : ControllerBase
                 UserName = User.FindFirstValue(ClaimTypes.Name),
                 Email = User.FindFirstValue(ClaimTypes.Email),
                 Roles = roles,
-                // WishLists = profile.WishLists.Select(w => new WishListDTO
-                // {
-                //     Id = w.Id,
-                //     Name = w.Name,
-                //     ListTypeId = w.ListTypeId,
-                //     ListType = new ListTypeDTO
-                //     {
-                //         Id = w.ListType.Id,
-                //         Name = w.ListType.Name
-                //     },
-                //     UserId = w.UserId,
-                //     ForSelf = w.ForSelf
-                // }).ToList(),
+                WishLists = profile.WishLists.Select(w => new WishListDTO
+                {
+                    Id = w.Id,
+                    Name = w.Name,
+                    ListTypeId = w.ListTypeId,
+                    ListType = new ListTypeDTO
+                    {
+                        Id = w.ListType.Id,
+                        Name = w.ListType.Name
+                    },
+                    UserId = w.UserId,
+                    ForSelf = w.ForSelf
+                }).ToList(),
                 GiftClaims = profile.GiftClaims.Select(gc => new GiftClaimDTO {
                     Id = gc.Id,
                     ItemId = gc.ItemId,
