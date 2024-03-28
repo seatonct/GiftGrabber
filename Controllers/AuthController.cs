@@ -108,10 +108,10 @@ public class AuthController : ControllerBase
         {
             var userDto = new UserProfileDTO
             {
-                Id = profile.Id,
+                // Id = profile.Id,
                 FirstName = profile.FirstName,
                 LastName = profile.LastName,
-                IdentityUserId = identityUserId,
+                // IdentityUserId = identityUserId,
                 UserName = User.FindFirstValue(ClaimTypes.Name),
                 Email = User.FindFirstValue(ClaimTypes.Email),
                 Roles = roles,
@@ -135,10 +135,10 @@ public class AuthController : ControllerBase
                     {
                         Id = gc.Item.Id,
                         Name = gc.Item.Name,
-                        Description = gc.Item.Description,
+                        // Description = gc.Item.Description,
                         Price = gc.Item.Price,
-                        ImageUrl = gc.Item.ImageUrl,
-                        StoreUrl = gc.Item.StoreUrl,
+                        // ImageUrl = gc.Item.ImageUrl,
+                        // StoreUrl = gc.Item.StoreUrl,
                         WishListId = gc.Item.WishListId,
                         WishList = new WishListDTO
                         {

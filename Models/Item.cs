@@ -10,4 +10,5 @@ public class Item
     public string? StoreUrl { get; set;}
     public int WishListId {get; set;}
     public WishList? WishList { get; set; }
+    public GiftClaim? GiftClaim { get; set; }
 }
