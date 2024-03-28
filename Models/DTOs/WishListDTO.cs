@@ -10,6 +10,6 @@ public class WishListDTO
     public ListTypeDTO? ListType {get; set;}
     public int UserId { get; set; }
     public UserProfileDTO? User { get; set; }
-    public Boolean ForSelf { get; set; }
+    public bool ForSelf { get; set; }
     public List<ItemDTO>? Items { get; set; }
 }

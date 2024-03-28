@@ -69,6 +69,12 @@ public class ItemController : ControllerBase
             item.WishList.Id = wishList.Id;
             item.WishList.Name = wishList.Name;
             item.WishList.UserId = wishList.UserId;
+
+            GiftClaim? giftClaim = _dbContext
+                            .GiftClaims
+                            .SingleOrDefault(gc => gc.ItemId == id);
+            
+            item.GiftClaim = giftClaim;
             
             return Ok(item);
         }

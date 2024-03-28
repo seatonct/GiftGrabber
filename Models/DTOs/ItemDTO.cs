@@ -10,4 +10,5 @@ public class ItemDTO
     public string? StoreUrl { get; set;}
     public int WishListId {get; set;}
     public WishListDTO? WishList { get; set; }
+    public GiftClaimDTO? GiftClaim { get; set; }
 }

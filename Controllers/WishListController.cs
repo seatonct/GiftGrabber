@@ -96,12 +96,29 @@ public class WishListController : ControllerBase
         {
             WishList? wishList = _dbContext
                 .WishLists
+                .Include(wl => wl.ListType)
                 .SingleOrDefault(w => w.Id == id);
             
             if (wishList == null)
             {
                 return NotFound();
             }
+
+            List<Item> items = _dbContext
+                    .Items
+                    .Where(i => i.WishListId == id)
+                    .Select(i => new Item
+                    {
+                        Id = i.Id,
+                        Name = i.Name,
+                        Price = i.Price,
+                        GiftClaim = _dbContext
+                            .GiftClaims
+                            .SingleOrDefault(gc => gc.ItemId == i.Id)
+                    })
+                    .ToList();
+            
+            wishList.Items = items;
             
             return Ok(wishList);
         }
