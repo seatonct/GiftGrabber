@@ -1,6 +1,12 @@
+using System;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using GiftGrabber.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +17,18 @@ builder.Services.AddControllers().AddJsonOptions(opts =>
 {
     opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactClient", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -69,6 +87,8 @@ app.UseHttpsRedirection();
 // these two calls are required to add auth to the pipeline for a request
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors("AllowReactClient"); // Add this line to enable CORS
 
 app.MapControllers();
 
