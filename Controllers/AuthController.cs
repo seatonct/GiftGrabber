@@ -63,9 +63,15 @@ public class AuthController : ControllerBase
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
+                 // Create authentication properties with custom expiration time
+                var authProperties = new AuthenticationProperties
+                {
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7) // Expires in one week
+                };
+
                 HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity)).Wait();
+                new ClaimsPrincipal(claimsIdentity), authProperties).Wait();
 
                 return Ok();
             }
