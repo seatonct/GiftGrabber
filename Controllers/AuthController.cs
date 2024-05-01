@@ -73,6 +73,17 @@ public class AuthController : ControllerBase
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity), authProperties).Wait();
 
+                Response.Headers["Expires"] = DateTime.UtcNow.AddDays(7).ToString("r");
+
+                // Set cookie options
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = false // Set HttpOnly to false
+                };
+
+                // Set the cookie with options
+                Response.Cookies.Append("GiftGrabberLoginCookie", "cookieValue", cookieOptions);
+
                 return Ok();
             }
 
