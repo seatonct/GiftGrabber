@@ -73,6 +73,8 @@ public class AuthController : ControllerBase
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity), authProperties).Wait();
 
+                Response.Headers["Expires"] = DateTime.UtcNow.AddDays(7).ToString("r");
+
                 return Ok();
             }
 
@@ -101,7 +103,6 @@ public class AuthController : ControllerBase
     }
 
     [HttpGet("Me")]
-    // [Authorize]
     public IActionResult Me()
     {
         var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
