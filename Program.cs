@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactClient", builder =>
     {
-        builder.WithOrigins("http://localhost:3000")
+        builder.WithOrigins("http://localhost:5173")
                .AllowAnyHeader()
                .AllowAnyMethod();
     });
@@ -87,8 +87,8 @@ app.UseHttpsRedirection();
 // these two calls are required to add auth to the pipeline for a request
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors("AllowReactClient"); // Add this line to enable CORS
+ // Add this line to enable CORS
+app.UseCors("AllowReactClient");
 
 app.MapControllers();
 
