@@ -14,23 +14,27 @@ namespace GiftGrabber.Controllers;
 
 
 [ApiController]
+// Route to access the controller's actions
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private GiftGrabberDbContext _dbContext;
     private UserManager<IdentityUser> _userManager;
 
+    // Constructor to inject dependencies
     public AuthController(GiftGrabberDbContext context, UserManager<IdentityUser> userManager)
     {
         _dbContext = context;
         _userManager = userManager;
     }
 
+    // Handle user login
     [HttpPost("login")]
     public IActionResult Login([FromHeader(Name = "Authorization")] string authHeader)
     {
         try
         {
+            // Extract and decode credentials from the Authorization header
             string encodedCreds = authHeader.Substring(6).Trim();
             string creds = Encoding
             .GetEncoding("iso-8859-1")
@@ -41,10 +45,13 @@ public class AuthController : ControllerBase
             string email = creds.Substring(0, separator);
             string password = creds.Substring(separator + 1);
 
+            // Find user by email
             var user = _dbContext.Users.Where(u => u.Email == email).FirstOrDefault();
             var userRoles = _dbContext.UserRoles.Where(ur => ur.UserId == user.Id).ToList();
             var hasher = new PasswordHasher<IdentityUser>();
             var result = hasher.VerifyHashedPassword(user, user.PasswordHash, password);
+            
+            // Validate user credentials
             if (user != null && result == PasswordVerificationResult.Success)
             {
                 var claims = new List<Claim>
@@ -54,7 +61,8 @@ public class AuthController : ControllerBase
                     new Claim(ClaimTypes.Email, user.Email)
 
                 };
-
+                
+                // Add user roles to claims
                 foreach (var userRole in userRoles)
                 {
                     var role = _dbContext.Roles.FirstOrDefault(r => r.Id == userRole.RoleId);
@@ -69,23 +77,28 @@ public class AuthController : ControllerBase
                     ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7) // Expires in one week
                 };
 
+                // Sign in the user
                 HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity), authProperties).Wait();
 
+                // Set response header for expiration
                 Response.Headers["Expires"] = DateTime.UtcNow.AddDays(7).ToString("r");
 
                 return Ok();
             }
 
+            // Return Unauthorized if authentication fails
             return new UnauthorizedResult();
         }
         catch (Exception ex)
         {
+            // Return 500 Internal Server Error if an exception occurs
             return StatusCode(500);
         }
     }
 
+    //Handle user logout
     [HttpGet]
     [Route("logout")]
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
@@ -93,19 +106,23 @@ public class AuthController : ControllerBase
     {
         try
         {
+            //Sign out the user
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme).Wait();
             return Ok();
         }
         catch (Exception ex)
         {
+            // Return 500 Internal Server Error if an exception occurs
             return StatusCode(500);
         }
     }
 
+    //Get the current user's profile information
     [HttpGet("Me")]
     public IActionResult Me()
     {
         var identityUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        // Include related entities in the query
         var profile = _dbContext.UserProfiles
             .Include(up => up.WishLists).ThenInclude(wl => wl.ListType)
             .Include(up => up.GiftClaims).ThenInclude(gc => gc.Item).ThenInclude(i => i.WishList)
@@ -115,10 +132,8 @@ public class AuthController : ControllerBase
         {
             var userDto = new UserProfileDTO
             {
-                // Id = profile.Id,
                 FirstName = profile.FirstName,
                 LastName = profile.LastName,
-                // IdentityUserId = identityUserId,
                 UserName = User.FindFirstValue(ClaimTypes.Name),
                 Email = User.FindFirstValue(ClaimTypes.Email),
                 Roles = roles,
@@ -164,6 +179,7 @@ public class AuthController : ControllerBase
         return NotFound();
     }
 
+    //Handle user registration
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegistrationDTO registration)
     {
@@ -173,6 +189,7 @@ public class AuthController : ControllerBase
             Email = registration.Email
         };
 
+        // Decode the password
         var password = Encoding
             .GetEncoding("iso-8859-1")
             .GetString(Convert.FromBase64String(registration.Password));
@@ -180,6 +197,7 @@ public class AuthController : ControllerBase
         var result = await _userManager.CreateAsync(user, password);
         if (result.Succeeded)
         {
+            // Add user profile to the database
             _dbContext.UserProfiles.Add(new UserProfile
             {
                 FirstName = registration.FirstName,
@@ -197,6 +215,7 @@ public class AuthController : ControllerBase
                 };
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
+            // Sign in the user
             HttpContext.SignInAsync(
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(claimsIdentity)).Wait();
