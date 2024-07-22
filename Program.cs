@@ -9,16 +9,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using GiftGrabber.Data;
 
+// Create a WebApplication builder
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+// Add controllers with JSON options to ignore cycles in object references during serialization
 builder.Services.AddControllers().AddJsonOptions(opts =>
 {
     opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
-// Add CORS
+// Add CORS configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactClient", builder =>
@@ -33,30 +35,31 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add authentication with cookie scheme
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
     {
         options.Cookie.Name = "GiftGrabberLoginCookie";
-        options.Cookie.SameSite = SameSiteMode.Strict;
-        options.Cookie.HttpOnly = true; //The cookie cannot be accessed through JS (protects against XSS)
-        options.Cookie.MaxAge = new TimeSpan(7, 0, 0, 0); // cookie expires in a week regardless of activity
-        options.SlidingExpiration = true; // extend the cookie lifetime with activity up to 7 days.
-        options.ExpireTimeSpan = new TimeSpan(24, 0, 0); // Cookie will expire in 24 hours without activity
-        options.Events.OnRedirectToLogin = (context) =>
+        options.Cookie.SameSite = SameSiteMode.Strict;          // SameSite policy to prevent CSRF
+        options.Cookie.HttpOnly = true;                         // The cookie cannot be accessed through JS (protects against XSS)
+        options.Cookie.MaxAge = new TimeSpan(7, 0, 0, 0);       // cookie expires in a week regardless of activity
+        options.SlidingExpiration = true;                       // extend the cookie lifetime with activity up to 7 days.
+        options.ExpireTimeSpan = new TimeSpan(24, 0, 0);        // Cookie will expire in 24 hours without activity
+        options.Events.OnRedirectToLogin = (context) =>         // Event to handle unauthorized access
         {
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             return Task.CompletedTask;
         };
-        options.Events.OnRedirectToAccessDenied = (context) =>
+        options.Events.OnRedirectToAccessDenied = (context) =>  // Event to handle access denied
         {
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             return Task.CompletedTask;
         };
     });
 
+// Configure Identity services for user and role management
 builder.Services.AddIdentityCore<IdentityUser>(config =>
             {
-                //for demonstration only - change these for other projects
                 config.Password.RequireDigit = false;
                 config.Password.RequiredLength = 8;
                 config.Password.RequireLowercase = false;
@@ -65,7 +68,7 @@ builder.Services.AddIdentityCore<IdentityUser>(config =>
                 config.User.RequireUniqueEmail = true;
             })
     .AddRoles<IdentityRole>()  //add the role service.  
-    .AddEntityFrameworkStores<GiftGrabberDbContext>();
+    .AddEntityFrameworkStores<GiftGrabberDbContext>(); // Use Entity Framework Core with DbContext
 
 // allows passing datetimes without time zone data 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -83,13 +86,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-// these two calls are required to add auth to the pipeline for a request
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseHttpsRedirection();  // Redirect HTTP requests to HTTPS
+app.UseAuthentication();    // Add authentication middleware to the pipeline
+app.UseAuthorization();     // Add authorization middleware to the pipeline
 
-app.UseCors("AllowReactClient"); // Add this line to enable CORS
+app.UseCors("AllowReactClient"); // Enable CORS for the specified policy
 
-app.MapControllers();
+app.MapControllers(); // Map controller endpoints
 
-app.Run();
+app.Run(); // Run the application
