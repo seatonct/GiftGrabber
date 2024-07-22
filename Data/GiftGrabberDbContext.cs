@@ -4,31 +4,37 @@ using GiftGrabber.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace GiftGrabber.Data;
+// DbContext class for the GiftGrabber application, inherits from IdentityDbContext to include identity functionality
 public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
 {
-    private readonly IConfiguration _configuration;
+    private readonly IConfiguration _configuration; // Configuration for the database context
+    // DbSet properties representing tables in the database
     public DbSet<WishList> WishLists { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<GiftClaim> GiftClaims { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<IdentityUser> IdentityUsers { get; set; }
 
+    // Constructor for the context, takes DbContextOptions and IConfiguration as parameters
     public GiftGrabberDbContext(DbContextOptions<GiftGrabberDbContext> context, IConfiguration config) : base(context)
     {
         _configuration = config;
     }
 
+    // Configures the model, setting up initial data and relationships
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        // Seed data for IdentityRole
         modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole
         {
             Id = "c3aaeb97-d2ba-4a53-a521-4eea61e59b35",
             Name = "Admin",
             NormalizedName = "admin"
         });
-
+        
+        // Seed data for IdentityUser
         modelBuilder.Entity<IdentityUser>().HasData(new IdentityUser
         {
             Id = "dbc40bc6-0829-4ac5-a3ed-180f5e916a5f",
@@ -37,6 +43,7 @@ public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
             PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(null, _configuration["AdminPassword"])
         });
 
+        // Seed data for IdentityUserRole
         modelBuilder.Entity<IdentityUserRole<string>>().HasData(new IdentityUserRole<string>
         {
             RoleId = "c3aaeb97-d2ba-4a53-a521-4eea61e59b35",
@@ -50,6 +57,7 @@ public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
             LastName = "Strator",
         });
 
+        // Seed data for ListType
         modelBuilder.Entity<ListType>().HasData(new ListType[]
         {
             new ListType {Id = 1, Name = "Christmas"},
@@ -65,6 +73,7 @@ public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
             new ListType {Id = 11, Name = "Other"}
         });
 
+        // Seed data for WishList
         modelBuilder.Entity<WishList>().HasData(new WishList[]
         {
             new WishList 
@@ -85,6 +94,7 @@ public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
             }
         });
 
+        // Seed data for Item
         modelBuilder.Entity<Item>().HasData(new Item[]
         {
             new Item
@@ -139,6 +149,7 @@ public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
             }
         });
 
+        // Seed data for GiftClaim
         modelBuilder.Entity<GiftClaim>().HasData(new GiftClaim[]
         {
             new GiftClaim 
