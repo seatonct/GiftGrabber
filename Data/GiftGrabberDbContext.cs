@@ -7,7 +7,8 @@ namespace GiftGrabber.Data;
 // DbContext class for the GiftGrabber application, inherits from IdentityDbContext to include identity functionality
 public class GiftGrabberDbContext : IdentityDbContext<IdentityUser>
 {
-    private readonly IConfiguration _configuration; // Configuration for the database context
+     // Configuration for the database context
+    private readonly IConfiguration _configuration;
     // DbSet properties representing tables in the database
     public DbSet<WishList> WishLists { get; set; }
     public DbSet<Item> Items { get; set; }
